@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake Job Posting Detector</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <style>
+    body {
+      background-color: #f0f2f5;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+    }
+
+    .card-header {
+      background-color: #2e3a59;
+      color: white;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .card-header-title {
+      color: white;
+      font-weight: 600;
+    }
+
+    .textarea {
+      border-radius: 8px;
+    }
+
+    .button.is-link {
+      background-color: #4a90e2;
+      border: none;
+      border-radius: 6px;
+    }
+
+    .button.is-link:hover {
+      background-color: #3a78c2;
+    }
+
+    .notification {
+      border-radius: 8px;
+    }
+
+    #spinner {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4a90e2;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="card fade-in">
+        <header class="card-header">
+          <p class="card-header-title is-centered is-size-4">
+            Fake Job Posting Detector
+          </p>
+        </header>
+        <div class="card-content">
+          <form method="POST" onsubmit="showSpinner()">
+            <div class="field">
+              <label class="label">Paste a job posting:</label>
+              <div class="control">
+                <textarea class="textarea" name="jobtext" placeholder="Enter job description here..." required></textarea>
+              </div>
+            </div>
+
+            <div class="field is-grouped is-justify-content-center mt-4">
+              <div class="control">
+                <button class="button is-link is-medium" type="submit">Detect</button>
+              </div>
+            </div>
+          </form>
+
+          <div id="spinner">
+            <div class="loader"></div>
+          </div>
+
+          {% if prediction %}
+            <div class="notification is-{{ 'danger' if prediction == 'Fake' else 'success' }} fade-in mt-5 has-text-centered">
+              <strong>Prediction:</strong> {{ prediction }}
+            </div>
+
+            {% if confidence is not none %}
+              <div class="mt-3 fade-in">
+                <label class="label has-text-centered">Model Confidence: {{ confidence }}%</label>
+                <progress class="progress is-info" value="{{ confidence }}" max="100">{{ confidence }}%</progress>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function showSpinner() {
+      document.getElementById('spinner').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
